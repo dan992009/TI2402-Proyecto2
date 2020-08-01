@@ -4,19 +4,22 @@
  * Profesora: Maria Jose Artavia.
  * IS 2020 - Proyecto 2 - 29/07/2020
  */
-
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>     
+#include <time.h>
 
+#include <vector>     
+using namespace std;
 #define NOMBRE_SIZE 50
 #define PROVINCIA_SIZE 50
-//--------------- DEFINICION DE ESTRUCTURAS
+
+//--------------- DEFINICION-DE-ESTRUCTURAS----------//
 typedef struct nodoVertice nodoVertice;
 typedef struct nodoArista nodoArista;
 
-//--------------------------------------ARISTA
+//----------------------ARISTA----------------------//
 struct nodoArista
 {
 	char origen[NOMBRE_SIZE];
@@ -64,12 +67,12 @@ void insertarArista(listaAristas *A, nodoArista a){
 	}
 }
 
-void mostrarAristas(listaAristas *A, char v[NOMBRE_SIZE]){
+//void mostrarAristas(listaAristas *A, char v[NOMBRE_SIZE]){
 	
-	for(nodoArista *i = A->inicio; i!=NULL; i=i->siguiente){
-		printf("\t\t-> %s, tiempo: %i.\n", i->destino, i->tiempo);
-	}
-}
+//	for(nodoArista *i = A->inicio; i!=NULL; i=i->siguiente){
+//		printf("\t\t-> %s, tiempo: %i.\n", i->destino, i->tiempo);
+//	}
+//}
 
 
 int eliminarArista(listaAristas *A, char d[NOMBRE_SIZE]){
@@ -112,7 +115,7 @@ int eliminarArista(listaAristas *A, char d[NOMBRE_SIZE]){
 	}
 }
 
-//--------------------------------------VERTICE
+//-------------VERTICE------------//
 struct nodoVertice
 {
 	char nombre[NOMBRE_SIZE];
@@ -159,12 +162,12 @@ void insertarVertice(listaVertices *V, nodoVertice v){
 	}
 }
 
-void mostrarVertices(listaVertices *V){
-	printf("\tVertices:\n");
-	for(nodoVertice *i = V->inicio; i!=NULL; i=i->siguiente){
-		printf("\t%s, %s, población: %i.\n", i->nombre, i->provincia, i->poblacion);
-	}
-}
+//void mostrarVertices(listaVertices *V){
+//	printf("\tVertices:\n");
+//	for(nodoVertice *i = V->inicio; i!=NULL; i=i->siguiente){
+//		printf("\t%s, %s, población: %i.\n", i->nombre, i->provincia, i->poblacion);
+//	}
+//}
 
 nodoVertice* consultarVertice(listaVertices *V, char n[NOMBRE_SIZE]){
 	nodoVertice *v = V->inicio;
@@ -216,11 +219,67 @@ int eliminarVertice(listaVertices *V, char n[NOMBRE_SIZE], char p[PROVINCIA_SIZE
 	}
 
 }
+//-------------HEAD--MAX-----------//
+void swap(int*a,int*b)
+{
+  int temp=*b;
+  *b=*a;
+  *a =temp;
+}
+void heapify(vector<int> &hT, int i)
+{
+  int size = hT.size();
+  int largest = i;
+  int l = 2 * i + 1;
+  int r = 2 * i + 2;
+  if (l < size && hT[l]>hT[largest])
+    largest = l;
+  if (r < size && hT[r] > hT[largest])
+    largest = r;
 
+  if (largest!=i)
+  {
+    swap(&hT[i], &hT[largest]);
+    heapify(hT, largest);
+  }
+}
+void insert(vector<int> &hT, int newNum)
+{
+  int size = hT.size();
+  if (size == 0)
+  {
+    hT.push_back(newNum);
+  }
+  else
+  {
+    hT.push_back(newNum);
+    for (int i = size / 2 - 1; i >= 0; i--)
+    {
+      heapify(hT, i);
+    }
+  }
+}
 
-//--------------- MAIN Y PRUEBAS
+void printArray(vector<int> &hT)
+{
+  for (int i = 0; i < hT.size(); ++i)
+    cout << hT[i] << " ";
+  cout<<"\n";
+}
+
+//----------- MAIN--Y--PRUEBAS------------//
 int main()
 {
+	  vector<int> heapTree;
+
+  insert(heapTree, 3);
+  insert(heapTree, 4);
+  insert(heapTree, 9);
+  insert(heapTree, 5);
+  insert(heapTree, 2);
+
+  cout << "Max-Heap array: ";
+  printArray(heapTree);
 	int accion;
 	listaVertices *V;
 	V = listaVerticesNueva();
@@ -285,7 +344,7 @@ int main()
 		}
 
 		if(accion == 3){
-			mostrarVertices(V);
+		//	mostrarVertices(V);
 		}
 
 		if(accion == 4){
@@ -332,16 +391,16 @@ int main()
 			
 		}
 
-		if(accion == 6){
-			printf("\n\tAristas por vertice:\n");
-			for(nodoVertice *i = V->inicio; i!=NULL; i=i->siguiente){
-				if(i->aristas->inicio != NULL){
-					printf("\t%s:\n", i->nombre);
-					mostrarAristas(i->aristas,i->nombre);
-				}
+		//if(accion == 6){
+		//	printf("\n\tAristas por vertice:\n");
+			//for(nodoVertice *i = V->inicio; i!=NULL; i=i->siguiente){
+			//	if(i->aristas->inicio != NULL){
+			//		printf("\t%s:\n", i->nombre);
+			//		mostrarAristas(i->aristas,i->nombre);
+			//	}
 				
-			}
-		}
+		//	}
+	//	}
 	}
 
 	return 0;
