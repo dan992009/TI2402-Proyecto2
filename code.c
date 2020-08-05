@@ -12,11 +12,16 @@
 
 #define NOMBRE_SIZE 50
 #define PROVINCIA_SIZE 50
+
 //--------------- DEFINICION DE ESTRUCTURAS
 typedef struct nodoVertice nodoVertice;
 typedef struct nodoArista nodoArista;
 
 //--------------------------------------ARISTA
+
+/**
+ * @brief      estructura de nodo para las aristas del grafo
+ */
 struct nodoArista
 {
 	char origen[NOMBRE_SIZE];
@@ -26,11 +31,20 @@ struct nodoArista
 	nodoArista *siguiente;
 };
 
+/**
+ * @brief      estructura de lista para las aristas del grafo
+ */
 typedef struct listaAristas
 {
 	nodoArista *inicio;
 }listaAristas;
 
+
+/**
+ * @brief      instancia de una nueva lista de aristas 
+ * @param      ninguno
+ * @return     puntero a una lista de aristas
+ */
 listaAristas *listaAristasNueva(){
 	listaAristas *A;
 	A = (listaAristas*)malloc(sizeof(listaAristas));
@@ -38,6 +52,12 @@ listaAristas *listaAristasNueva(){
 	return A;
 }
 
+/**
+ * @brief      inserta una arista a una lista de aristas
+ * @param      A     puntero a una lista de aristas
+ * @param      a     nodo de tipo arista
+ * @return     ninguno
+ */
 void insertarArista(listaAristas *A, nodoArista a){
 	nodoArista *n, *aux;
 	if(A->inicio == NULL){
@@ -64,7 +84,12 @@ void insertarArista(listaAristas *A, nodoArista a){
 	}
 }
 
-void mostrarAristas(listaAristas *A, char v[NOMBRE_SIZE]){
+/**
+ * @brief      imprime en consola el destino y tiempo de cada arista
+ * @param      A     puntero a una lista de aristas
+ * @return     ninguno
+ */
+void mostrarAristas(listaAristas *A){
 	
 	for(nodoArista *i = A->inicio; i!=NULL; i=i->siguiente){
 		printf("\t\t-> %s, tiempo: %i.\n", i->destino, i->tiempo);
@@ -72,6 +97,12 @@ void mostrarAristas(listaAristas *A, char v[NOMBRE_SIZE]){
 }
 
 
+/**
+ * @brief      elimina una arista de una lista de aristas
+ * @param      A     puntero a lista de aristas
+ * @param      d     char nombre de la arista a eliminar
+ * @return     0 si la arista se elimino y 1 si no fue eliminada
+ */
 int eliminarArista(listaAristas *A, char d[NOMBRE_SIZE]){
 	nodoArista *a, *anterior = NULL;
 	a = A->inicio; 
@@ -112,21 +143,38 @@ int eliminarArista(listaAristas *A, char d[NOMBRE_SIZE]){
 	}
 }
 
+
 //--------------------------------------VERTICE
+
+/**
+ * @brief      estructura vertive para los vertices del grafo
+ */
 struct nodoVertice
 {
 	char nombre[NOMBRE_SIZE];
 	char provincia[PROVINCIA_SIZE];
-	int poblacion;	
+	int poblacion;
 	listaAristas *aristas;
 	nodoVertice *siguiente;
+	
+	//--- Para el Djisktra
+	int pesoAcumulado; 
+	nodoVertice *verticeAnterior;
+	int etiqueta; 
 };
 
+/**
+ * @brief      estructura de lista para los vertices del grafo
+ */
 typedef struct listaVertices
 {
 	nodoVertice *inicio;
 }listaVertices;
 
+/**
+ * @brief      instancia una nueva lista de vertices
+ * @return     puntero a la lista de vertices
+ */
 listaVertices *listaVerticesNueva(){
 	listaVertices *V;
 	V = (listaVertices*)malloc(sizeof(listaVertices));
@@ -134,6 +182,12 @@ listaVertices *listaVerticesNueva(){
 	return V;
 }
 
+/**
+ * @brief      inserta un vertice en una lista de vertices
+ * @param      V     puntero a una lista de vertices
+ * @param[in]  v     el vertice a insertar
+ * @return     ninguno
+ */
 void insertarVertice(listaVertices *V, nodoVertice v){
 	nodoVertice *n, *aux;
 	if(V->inicio == NULL){
@@ -143,6 +197,9 @@ void insertarVertice(listaVertices *V, nodoVertice v){
 		V->inicio->poblacion = v.poblacion;
 		V->inicio->aristas = v.aristas;
 		V->inicio->siguiente = NULL;
+		V->inicio->pesoAcumulado = 0;
+		V->inicio->verticeAnterior = NULL;
+		V->inicio->etiqueta = 0;
 	}	
 	else{
 		n = V->inicio;
@@ -156,9 +213,17 @@ void insertarVertice(listaVertices *V, nodoVertice v){
 		aux->siguiente->poblacion = v.poblacion;
 		aux->siguiente->aristas = v.aristas;
 		aux->siguiente->siguiente = NULL;
+		aux->siguiente->pesoAcumulado = 0;
+		aux->siguiente->verticeAnterior = NULL;
+		aux->siguiente->etiqueta = 0;
 	}
 }
 
+/**
+ * @brief      imprime en consola informacion sobre cada vertice de la lista
+ * @param      V     puntero a la lista de vertice
+ * @return     ninguno
+ */
 void mostrarVertices(listaVertices *V){
 	printf("\tVertices:\n");
 	for(nodoVertice *i = V->inicio; i!=NULL; i=i->siguiente){
@@ -166,6 +231,12 @@ void mostrarVertices(listaVertices *V){
 	}
 }
 
+/**
+ * @brief      consulta si el vertice existe dentro de la lista de vertices
+ * @param      V     puntero a la lista de vertices
+ * @param      n     char del nombre del vertice a buscar
+ * @return     puntero al vertice buscado, si no lo encuentra retorna NULL
+ */
 nodoVertice* consultarVertice(listaVertices *V, char n[NOMBRE_SIZE]){
 	nodoVertice *v = V->inicio;
 	while(v!=NULL){
@@ -178,6 +249,13 @@ nodoVertice* consultarVertice(listaVertices *V, char n[NOMBRE_SIZE]){
 	return NULL;
 }
 
+/**
+ * @brief      elimina un vertice de una lista de vertices
+ * @param      V     puntero a una lista de vertices
+ * @param      n     char del nombre del vertice a buscar
+ * @param      p     char con la provincia del verticce a buscar
+ * @return     0 si el vertice se elimino y 1 si no fue eliminado 
+ */
 int eliminarVertice(listaVertices *V, char n[NOMBRE_SIZE], char p[PROVINCIA_SIZE]){
 	nodoVertice *v, *anterior = NULL;
 	v = V->inicio; 
@@ -217,8 +295,117 @@ int eliminarVertice(listaVertices *V, char n[NOMBRE_SIZE], char p[PROVINCIA_SIZE
 
 }
 
+/**
+ * @brief      cambia el parametro etiqueta de un nodo vertice
+ * @param      V     puntero a la lista de vertices
+ * @param      n     nombre del vertice a cambiar la etiqueta
+ * @return     ninguno
+ */
+void cambiarEtiquetaAPermanente(listaVertices *V, char n[NOMBRE_SIZE]){
+	nodoVertice *v = V->inicio;
+	while(v!=NULL){
+		if(strcmp(v->nombre,n)==0){
+			v->etiqueta = 1;
+		}
+		v = v->siguiente;
+	}
+}
+
+/**
+ * @brief      immprime en consola la etiqueta de cada nodo
+ * @param      V     puntero a la lista de vertices 
+ * @return     ninguno
+ */
+void mostrarEtiquetas(listaVertices *V){
+	printf("\t\nEtiquetas:\n");
+	for(nodoVertice *i = V->inicio; i!=NULL; i=i->siguiente){
+		printf("\t%s [%i,%s,%i]\n", i->nombre, i->pesoAcumulado, i->verticeAnterior->nombre, i->etiqueta);
+	}
+}
+
+/**
+ * @brief      modifica los valores de las etiquetas de los nodos adyacentes a un nodo dado
+ * @param      V     puntero a la lista de vertices
+ * @param      v     puntero del nodo cuyos adyacentes se van a modificar
+ */
+void etiquetarAdyacentes(listaVertices *V, nodoVertice *v){
+	nodoVertice *aux;
+	for(nodoArista *i=v->aristas->inicio; i!=NULL; i=i->siguiente){
+		aux = consultarVertice(V,i->destino);
+		if(aux->pesoAcumulado > v->pesoAcumulado + i->tiempo || aux->pesoAcumulado == 0 && aux->etiqueta == 0){
+			aux->pesoAcumulado = v->pesoAcumulado + i->tiempo;
+			aux->verticeAnterior = v;
+			
+		}
+	}
+}
+
+/**
+ * @brief      recorre la lista de vertices en busca de la etiqueta temporal de menor valor
+ * @param      V     puntero a la lista de vertices
+ * @return     puntero al nodo con la menor etiqueta temporal
+ */
+nodoVertice* buscarEtiquetaMenor(listaVertices *V){
+	nodoVertice *menorVertice = V->inicio;
+	int menorPesoAcumulado = menorVertice->pesoAcumulado;	
+
+	for(nodoVertice *i = V->inicio; i!=NULL; i= i->siguiente){
+		//printf("menor peso %i de %s\n", menorPesoAcumulado, menorVertice->nombre );
+		if(menorVertice->etiqueta == 1 ){
+			menorVertice = menorVertice->siguiente;
+			menorPesoAcumulado = menorVertice->pesoAcumulado;
+		}
+		if(i->pesoAcumulado < menorPesoAcumulado && i->pesoAcumulado != 0 & i->etiqueta !=1 || menorPesoAcumulado == 0){
+			menorPesoAcumulado = i->pesoAcumulado;
+			menorVertice = i;
+		}
+	}
+
+	printf("\n\tMenor peso: %i de %s\n", menorPesoAcumulado, menorVertice->nombre );
+	return menorVertice;
+	
+}
+
+/**
+ * @brief      recorre la lista de vertices para comprobar si hay etiquetas temporales 
+ * @param      V     puntero a la lista de vertices *
+ * @return     0 si hay etiquetas temporales y 1 si todas son permanentes
+ */
+int etiquetasPermanentesCompletas(listaVertices *V){
+	int e = 1 ;
+	for(nodoVertice *i = V->inicio; i!=NULL; i=i->siguiente){
+		if(i->etiqueta == 0){
+			e = 0; 
+		}
+	}
+	return e;
+}
+
+/**
+ * @brief      encuentra el camino mas corto a cada nodo apartir de un origen
+ * @param      V       puntero a la lista de vertices
+ * @param      origen char al nodo desde el cual se calculan los caminos mas cortos
+ */
+void Djisktra(listaVertices *V, char origen[NOMBRE_SIZE]){
+	
+	cambiarEtiquetaAPermanente(V,origen);
+	mostrarEtiquetas(V);
+	if(etiquetasPermanentesCompletas(V) != 1){
+		nodoVertice *v = consultarVertice(V,origen);
+		etiquetarAdyacentes(V,v);
+		nodoVertice *menorVertice = buscarEtiquetaMenor(V);
+		Djisktra(V, menorVertice->nombre);
+	}
+}
+
+
 
 //--------------- MAIN Y PRUEBAS
+
+/**
+ * @brief      funcion main
+ * @return     0 si la ejecucion fue exitosa
+ */
 int main()
 {
 	int accion;
@@ -230,6 +417,7 @@ int main()
 	int pasajerosMinimosTren, pasajerosMinimosBus, pasajerosMinimosTaxi, pasajerosMinimosVehiculo = 0;
 	int pasajerosMaximosTren, pasajerosMaximosBus, pasajerosMaximosTaxi, pasajerosMaximosVehiculo = 0;
 	int simulacionesTren, simulacionesBus, simulacionesTaxi, simulacionesVehiculo = 0;
+	char origen[NOMBRE_SIZE];
 
 //--------------	EJEMPLOS 
 	{
@@ -315,10 +503,18 @@ int main()
 		printf("0\t Salir.\n");
 		printf("\nSeleccione una accion de menu realizar: ");
 		scanf("%i", &accion);
-			if(accion == 0 || accion > 4){
+			if(accion == 0 || accion > 5){
 				break;
 			}
 			
+			if(accion == 5){
+				
+				printf("\tInserte vertice origen del Dijkstra: ");
+				fgets(tempVertice.nombre, NOMBRE_SIZE, stdin);
+				scanf("%[^\n]", tempVertice.nombre);
+				Djisktra(V,tempVertice.nombre);
+			}
+
 			if(accion == 1){
 				printf("\n*** Menu del GRAFO: *** \n");
 				printf("1\t Crear VERTICE.\n");
@@ -429,7 +625,7 @@ int main()
 						for(nodoVertice *i = V->inicio; i!=NULL; i=i->siguiente){
 							if(i->aristas->inicio != NULL){
 								printf("\t%s:\n", i->nombre);
-								mostrarAristas(i->aristas,i->nombre);
+								mostrarAristas(i->aristas);
 							}
 							
 						}
