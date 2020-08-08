@@ -10,10 +10,10 @@
 #include <string.h>
 #include <time.h>     
 #include<iostream>
-using namespace std;
-
+#include <vector>
 #define NOMBRE_SIZE 50
 #define PROVINCIA_SIZE 50
+using namespace std;
 
 //--------------- DEFINICION DE ESTRUCTURAS
 typedef struct nodoVertice nodoVertice;
@@ -399,6 +399,68 @@ void Djisktra(listaVertices *V, char origen[NOMBRE_SIZE]){
 		Djisktra(V, menorVertice->nombre);
 	}
 }
+//------------head max -------------------------------
+
+
+void swap(int *a, int *b)
+{
+  int temp = *b;
+  *b = *a;
+  *a = temp;
+}
+void heapify(vector<int> &hT, int i)
+{
+  int size = hT.size();
+  int largest = i;
+  int l = 2 * i + 1;
+  int r = 2 * i + 2;
+  if (l < size && hT[l] > hT[largest])
+    largest = l;
+  if (r < size && hT[r] > hT[largest])
+    largest = r;
+
+  if (largest != i)
+  {
+    swap(&hT[i], &hT[largest]);
+    heapify(hT, largest);
+  }
+}
+void insert(vector<int> &hT, int newNum)
+{
+  int size = hT.size();
+  if (size == 0)
+  {
+    hT.push_back(newNum);
+  }
+  else
+  {
+    hT.push_back(newNum);
+    for (int i = size / 2 - 1; i >= 0; i--)
+    {
+      heapify(hT, i);
+    }
+  }
+}
+
+void printArray(vector<int> &hT)
+{
+  for (int i = 0; i < hT.size(); ++i)
+    cout << hT[i] << " ";
+  cout << "\n";
+}
+void primerArray(vector<int> &hT){
+    cout << hT[0]; 
+    cout << "\n";
+}
+void ultimoArray(vector<int> &hT){
+    cout << hT[hT.size()-1];
+	cout << "\n";
+}
+
+
+
+//------------simulacion-------------------------------
+
 /**
  *@brief Codigo de creacrion de rango de ramdom
  *@param a int inicio del paramtro del ramdom
@@ -406,9 +468,8 @@ void Djisktra(listaVertices *V, char origen[NOMBRE_SIZE]){
  *@return  num  ramdom entre a y b
 */
 void random(int a,int b){
-
-  int num;
-    srand(time(NULL));
+	int num;
+	srand(time(NULL));
 	num = a + rand() % (b+1 - a);
 	cout << num;
 } 
