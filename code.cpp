@@ -92,9 +92,8 @@ void insertarArista(listaAristas *A, nodoArista a){
  * @return     ninguno
  */
 void mostrarAristas(listaAristas *A){
-	
 	for(nodoArista *i = A->inicio; i!=NULL; i=i->siguiente){
-		printf("\t\t-> %s, tiempo: %i.\n", i->destino, i->tiempo);
+		printf("\t\t-> %s, tiempo: %i, distacia: %i.\n", i->destino, i->tiempo, i->distancia);
 	}
 }
 
@@ -172,7 +171,6 @@ typedef struct listaVertices
 {
 	nodoVertice *inicio;
 }listaVertices;
-
 /**
  * @brief      instancia una nueva lista de vertices
  * @return     puntero a la lista de vertices
@@ -304,6 +302,7 @@ int eliminarVertice(listaVertices *V, char n[NOMBRE_SIZE], char p[PROVINCIA_SIZE
  * @return     ninguno
  */
 void cambiarEtiquetaAPermanente(listaVertices *V, char n[NOMBRE_SIZE]){
+
 	nodoVertice *v = V->inicio;
 	while(v!=NULL){
 		if(strcmp(v->nombre,n)==0){
@@ -312,7 +311,6 @@ void cambiarEtiquetaAPermanente(listaVertices *V, char n[NOMBRE_SIZE]){
 		v = v->siguiente;
 	}
 }
-
 /**
  * @brief      immprime en consola la etiqueta de cada nodo
  * @param      V     puntero a la lista de vertices 
@@ -324,7 +322,6 @@ void mostrarEtiquetas(listaVertices *V){
 		printf("\t%s [%i,%s,%i]\n", i->nombre, i->pesoAcumulado, i->verticeAnterior->nombre, i->etiqueta);
 	}
 }
-
 /**
  * @brief      modifica los valores de las etiquetas de los nodos adyacentes a un nodo dado
  * @param      V     puntero a la lista de vertices
@@ -341,7 +338,6 @@ void etiquetarAdyacentes(listaVertices *V, nodoVertice *v){
 		}
 	}
 }
-
 /**
  * @brief      recorre la lista de vertices en busca de la etiqueta temporal de menor valor
  * @param      V     puntero a la lista de vertices
@@ -350,7 +346,6 @@ void etiquetarAdyacentes(listaVertices *V, nodoVertice *v){
 nodoVertice* buscarEtiquetaMenor(listaVertices *V){
 	nodoVertice *menorVertice = V->inicio;
 	int menorPesoAcumulado = menorVertice->pesoAcumulado;	
-
 	for(nodoVertice *i = V->inicio; i!=NULL; i= i->siguiente){
 		//printf("menor peso %i de %s\n", menorPesoAcumulado, menorVertice->nombre );
 		if(menorVertice->etiqueta == 1 ){
@@ -389,7 +384,6 @@ int etiquetasPermanentesCompletas(listaVertices *V){
  * @param      origen char al nodo desde el cual se calculan los caminos mas cortos
  */
 void Djisktra(listaVertices *V, char origen[NOMBRE_SIZE]){
-	
 	cambiarEtiquetaAPermanente(V,origen);
 	mostrarEtiquetas(V);
 	if(etiquetasPermanentesCompletas(V) != 1){
@@ -401,15 +395,23 @@ void Djisktra(listaVertices *V, char origen[NOMBRE_SIZE]){
 }
 //------------head max -------------------------------
 
-
+/**
+ * @brief     
+ * @param    
+ * @param     
+ */
 void swap(int *a, int *b)
 {
   int temp = *b;
   *b = *a;
   *a = temp;
 }
-void heapify(vector<int> &hT, int i)
-{
+/**
+ * @brief     
+ * @param    
+ * @param     
+ */
+void heapify(vector<int> &hT, int i){
   int size = hT.size();
   int largest = i;
   int l = 2 * i + 1;
@@ -418,15 +420,18 @@ void heapify(vector<int> &hT, int i)
     largest = l;
   if (r < size && hT[r] > hT[largest])
     largest = r;
-
   if (largest != i)
   {
     swap(&hT[i], &hT[largest]);
     heapify(hT, largest);
   }
 }
-void insert(vector<int> &hT, int newNum)
-{
+/**
+ * @brief     
+ * @param    
+ * @param     
+ */
+void insert(vector<int> &hT, int newNum){
   int size = hT.size();
   if (size == 0)
   {
@@ -441,42 +446,86 @@ void insert(vector<int> &hT, int newNum)
     }
   }
 }
-
-void printArray(vector<int> &hT)
-{
+/**
+ * @brief     
+ * @param    
+ * @param     
+ */
+void printArray(vector<int> &hT){
   for (int i = 0; i < hT.size(); ++i)
     cout << hT[i] << " ";
   cout << "\n";
 }
+/**
+ * @brief     
+ * @param    
+ * @param     
+ */
 void primerArray(vector<int> &hT){
     cout << hT[0]; 
     cout << "\n";
 }
+/**
+ * @brief     
+ * @param    
+ * @param     
+ */
 void ultimoArray(vector<int> &hT){
     cout << hT[hT.size()-1];
 	cout << "\n";
 }
-
-
-
 //------------simulacion-------------------------------
-
 /**
  *@brief Codigo de creacrion de rango de ramdom
  *@param a int inicio del paramtro del ramdom
  *@param b int final del parmetro del ramdom 
- *@return  num  ramdom entre a y b
+ *@return  numero int  ramdom entre a y b
 */
-void random(int a,int b){
-	int num;
-	srand(time(NULL));
+int random(int a,int b){
+  int num;
+    srand(time(NULL));
 	num = a + rand() % (b+1 - a);
-	cout << num;
-} 
+	return num;
+}
+void Simulaciontaxivihuculo(listaVertices *V, char origen[NOMBRE_SIZE], char Final[NOMBRE_SIZE]){
+	int sumatemp=0;
+	int sumadistacia= 0; 
+	nodoVertice *R =V->inicio;
+	listaAristas *A = V->inicio->aristas;
+	nodoArista *p= A->inicio;
+		cout << "0";
+	while(R->nombre!=origen ){
+		if(R->nombre== origen){
+			cout << "1";
+			while(A->inicio!=0){
+				cout << "2";
+				if(p->destino==Final){
+					cout << "3";
+					sumatemp = sumatemp +  p->tiempo;
+					sumadistacia= sumadistacia +p->distancia;
+					printf("\n\t Origen: %c a Destino: %c a la distacia de: %i con Tiempo: %i\n",origen, Final,sumadistacia,sumatemp);
+					break;	
+				}else{
+					cout << "3";
+					sumatemp = sumatemp +  p->tiempo;
+					sumadistacia= sumadistacia +p->distancia;
+					p=p->siguiente;
+				}
+			
+			}
+		}else{
+			cout << "4";
+			R =R->siguiente;
+		}	
+	}
+}
 
 
+
+	
+void Simulacionbustren(listaVertices *V, char origen[NOMBRE_SIZE], char Final[NOMBRE_SIZE]){
+}
 //--------------- MAIN Y PRUEBAS-------------------------
-
 /**
  * @brief      funcion main
  * @return     0 si la ejecucion fue exitosa
@@ -486,15 +535,15 @@ int main()
 	int accion;
 	listaVertices *V;
 	V = listaVerticesNueva();
-
 	nodoVertice tempVertice;
+	nodoVertice temp2Vertice;
 	nodoArista tempArista; 
 	int pasajerosMinimosTren, pasajerosMinimosBus, pasajerosMinimosTaxi, pasajerosMinimosVehiculo = 0;
 	int pasajerosMaximosTren, pasajerosMaximosBus, pasajerosMaximosTaxi, pasajerosMaximosVehiculo = 0;
 	int simulacionesTren, simulacionesBus, simulacionesTaxi, simulacionesVehiculo = 0;
 	char origen[NOMBRE_SIZE];
 
-//--------------	EJEMPLOS 
+//--------------	EJEMPLOS -----------------------------
 	{
 	listaAristas *g = listaAristasNueva(); 
 	listaAristas *u = listaAristasNueva();
@@ -515,7 +564,7 @@ int main()
 	nodoVertice lfv;
 
 	strcpy(gv.nombre,"Guatuso"); strcpy(gv.provincia,"Alajuela"); gv.poblacion = 12000; gv.aristas = g;
-	strcpy(uv.nombre,"Upala"); strcpy(uv.provincia,"Alajuela"); uv.poblacion = 13000; uv.aristas = u;
+	strcpy(uv.nombre,"San Carlos"); strcpy(uv.provincia,"Alajuela"); uv.poblacion = 13000; uv.aristas = u;
 	strcpy(lcv.nombre,"Los Chiles"); strcpy(lcv.provincia,"Alajuela"); lcv.poblacion = 14000; lcv.aristas = lc; 
 	strcpy(tv.nombre,"Tilaran"); strcpy(tv.provincia,"Guanacaste"); tv.poblacion = 15000; tv.aristas = t;
 	strcpy(scv.nombre,"San Carlos"); strcpy(scv.provincia,"Alajuela"); scv.poblacion = 16000; scv.aristas = sc;
@@ -578,7 +627,7 @@ int main()
 		printf("0\t Salir.\n");
 		printf("\nSeleccione una accion de menu realizar: ");
 		scanf("%i", &accion);
-			if(accion == 0 || accion > 5){
+			if(accion == 0 || accion > 6){
 				break;
 			}
 			
@@ -588,7 +637,20 @@ int main()
 				fgets(tempVertice.nombre, NOMBRE_SIZE, stdin);
 				scanf("%[^\n]", tempVertice.nombre);
 				Djisktra(V,tempVertice.nombre);
-			}
+			}	
+				
+			if(accion == 6){
+				
+				printf("\tInserte vertice origen: ");
+				fgets(tempVertice.nombre, NOMBRE_SIZE, stdin);
+				scanf("%[^\n]", tempVertice.nombre);
+				printf("\tInserte vertice Final: ");
+				fgets(temp2Vertice.nombre, NOMBRE_SIZE, stdin);
+				scanf("%[^\n]", tempVertice.nombre);
+				Simulaciontaxivihuculo(V,tempVertice.nombre,temp2Vertice.nombre);
+	
+			}	
+		
 
 			if(accion == 1){
 				printf("\n*** Menu del GRAFO: *** \n");
@@ -730,6 +792,12 @@ int main()
 			}//fin accion 3 del menu principal
 			
 			if(accion == 3){ 
+				printf("\n*** Menu de simulacion: *** \n");
+				printf("1\t Simulacion taxi.\n");
+				printf("2\t Simulacion vehiculo.\n");
+				printf("3\t Simulacion Bus\n");
+				printf("4\t Simulacion Tren.\n");
+				printf("0\t Salir de la simulacion.\n");
 				//METER AQUI EL CODIGO DE LA SIMULACION
 
 			}
